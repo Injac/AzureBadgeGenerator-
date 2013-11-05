@@ -162,8 +162,7 @@ $RECYCLE.BIN/
 .DS_Store
 
 #Fonts
-.ttf
-.otf
+AzureBadgeGenerator/BadgeServiceContent/Fonts/
 
 #specific exe and text files
 PsExec.exe
