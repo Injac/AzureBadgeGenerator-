@@ -1,0 +1,34 @@
+﻿@model BadgeAdmin.Models.Badges
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Badges</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.BadgeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BadgeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Badge)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Badge)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

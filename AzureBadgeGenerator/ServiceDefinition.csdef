@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="AzureBadgeGenerator" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2013-10.2.2">
+  <WorkerRole name="BadgeService" vmsize="Small">
+    <Runtime executionContext="elevated" />
+    <Imports>
+      <Import moduleName="RemoteAccess" />
+      <Import moduleName="RemoteForwarder" />
+    </Imports>
+    <Endpoints>
+      <InputEndpoint name="Http" protocol="http" port="80" localPort="80" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="SqlConnection" />
+    </ConfigurationSettings>
+    <Startup>
+      <Task commandLine="startup.cmd" executionContext="elevated" taskType="simple" />
+    </Startup>
+  </WorkerRole>
+</ServiceDefinition>
