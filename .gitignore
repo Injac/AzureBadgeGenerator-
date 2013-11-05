@@ -164,8 +164,6 @@ $RECYCLE.BIN/
 #Fonts
 Fonts/
 
-#specific exe and text files
-PsExec.exe
-FontReg.exe
+
 
 
