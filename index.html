@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Azurebadgegenerator by Injac</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Azurebadgegenerator</h1>
+        <h2>AzureBadgeGenerator</h2>
+        <a href="https://github.com/Injac/AzureBadgeGenerator-" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a name="windows-azure-badge-generator" class="anchor" href="#windows-azure-badge-generator"><span class="octicon octicon-link"></span></a>Windows Azure Badge Generator</h2>
+
+<h3>
+<a name="what-is-it" class="anchor" href="#what-is-it"><span class="octicon octicon-link"></span></a>What is it?</h3>
+
+<p>The Windows Azure Badge generator is an Azure Worker Role that allows you to generate all different kinds of graphics based on SVG. It has the following features:</p>
+
+<ul>
+<li>Replace text within SVG files (It can do all kinds of modifications. Only the text replace feature is implemented)</li>
+<li>Render SVG to PNG or other formats (Currently only PNG)</li>
+<li>Manage and store SVG raw data (XML) in SQL Server</li>
+<li>PCL (Portable Class Library) client for .NET 4.5 and higher, Windows Phone 8, Windows Store Apps</li>
+</ul><p>The project name is a bit misleading. You can generate all types of images based on SVGs and not only badges. Maybe in the future the project will be renamed. We will see. </p>
+
+<h3>
+<a name="technology-stack" class="anchor" href="#technology-stack"><span class="octicon octicon-link"></span></a>Technology Stack</h3>
+
+<p>For this project the following SDKs, tools and components have been used:</p>
+
+<ul>
+<li>Windows Azure SDK 2.2</li>
+<li>Visual Studio 2013 RTM</li>
+<li>Windows Phone 8 SDK</li>
+<li>PCL 4.6</li>
+<li>Azure Worker Role</li>
+<li>Unity for dependency injection</li>
+<li>OWIN hosted Web Api</li>
+<li>TAP - Async/Await</li>
+<li>ASP .NET MVC 5 using async controllers</li>
+<li>Using the great <strong>SVG.NET</strong> implementation to replace SVG content: <a href="https://github.com/vvvv/SVG">SVG.NET</a>
+</li>
+</ul><h3>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
+
+<p>Basically you download the entire source and compile it in Visual Studio 2013 RTM. To be able to compile the source, you need the latest Windows Azure SDK. You can download the latest Windows Azure SDK here: <a href="http://www.windowsazure.com/en-us/downloads/?sdk=net" title="Windows Azure SDK for .NET Download Page">Windows Azure SDK for .NET Download Page </a></p>
+
+<p>Before you compile the solution, you have to set some important configuration values to make the solution work. Mainly those settings are SQL Server connections. You have to change:</p>
+
+<ul>
+<li>The SQL Server connection string for the SVG-Admin interface</li>
+<li>The SQL Server Settings for the Worker Role</li>
+</ul><h4>
+<a name="change-the-sql-server-connection-settings-for-the-svg-admin-interface" class="anchor" href="#change-the-sql-server-connection-settings-for-the-svg-admin-interface"><span class="octicon octicon-link"></span></a>Change the SQL Server connection settings for the SVG-Admin Interface</h4>
+
+<p>The changes need to be done in Web.config. Please search for "BadgesEntities" and replace the following parts:</p>
+
+<pre><code>&lt;add name="BadgesEntities" connectionString="metadata=res://*/Models.Badges.csdl|res://*/Models.Badges.ssdl|res://*/Models.Badges.msl;provider=System.Data.SqlClient;provider connection string=&amp;quot;data source=[DATABASESERVER];user id=[USERNAME];password=[PASSWORD];MultipleActiveResultSets=True;App=EntityFramework&amp;quot;" providerName="System.Data.EntityClient" /&gt;
+</code></pre>
+
+<ul>
+<li>Replace <strong>[SERVERNAME]</strong> with your SQL Server instance (without the square brackets)</li>
+<li>Replace <strong>[USERNAME]</strong> with your SQL Server user (again without the square brackets)</li>
+<li>Replace <strong>[PASSWORD]</strong> with your SQL Server user, password (again without the square brackets)</li>
+</ul><h4>
+<a name="change-the-sql-server-connection-settings-for-the-azure-worker-role" class="anchor" href="#change-the-sql-server-connection-settings-for-the-azure-worker-role"><span class="octicon octicon-link"></span></a>Change the SQL Server connection settings for the Azure Worker Role</h4>
+
+<p>Expand the Worker Role project (That one with the cloud symbol) and look for the "BadgeService" entry. Right click on "BadgeService" and select "Properties". Select the "Settings" tab and change the value "SqlConnection" according to your SQL Server/Azure SQL settings.</p>
+
+<h4>
+<a name="create-the-sql-serverazure-sql-database-and-the-badges-table" class="anchor" href="#create-the-sql-serverazure-sql-database-and-the-badges-table"><span class="octicon octicon-link"></span></a>Create the SQL Server/Azure SQL database and the Badges table</h4>
+
+<p>First of all, you need to create a local SQL Server database or an Azure SQL database. If you want to test locally, you can install the latest version of SQL Server Express. You can download SQL Server 2012 Express here: <a href="http://www.microsoft.com/en-us/download/details.aspx?id=29062">SQL Server Express 2012 Download</a></p>
+
+<p>There is a folder called "SQL" located inside the "BadgeService" project. You can find 2 files there:</p>
+
+<ul>
+<li>SQLAzure.sql (Use that to execute it against an Azure SQL database)</li>
+<li>SQLServerLocal.sql (Use that to execute it against a local SQL Server installation)</li>
+</ul><p>The nice thing is, that you can execute the scripts from within Visual Studio. You can also fire-up SSMS (SQL Sever Management Studio) and connect to your Azure SQL database or to your local database. In both cases execute the appropriate script against your database.</p>
+
+<h4>
+<a name="access-the-service-locally-from-within-windows-phone-emulator-8" class="anchor" href="#access-the-service-locally-from-within-windows-phone-emulator-8"><span class="octicon octicon-link"></span></a>Access the service locally from within Windows Phone emulator 8</h4>
+
+<p>Developing Azure servcies and testing API's locally is a PITA. To be able to access the badge service from within Windows Phone emulator you need to open a command session as administrator and execute the following command:</p>
+
+<pre><code>    C:\Windows\system32&gt;netsh interface portproxy add v4tov4 listenport=800 connecta
+ddress=127.255.0.0 connectport=81 protocol=tcp
+</code></pre>
+
+<p>This will allow you to access the Badges service like this: http://[YOURPCNAME]:800/badgeservice/[CONTROLLERACTION] . It will work also in your local network. All credits for this tip go to <strong>Sandro Di Mattia</strong>: <a href="http://fabriccontroller.net/blog/posts/remotely-accessing-the-windows-azure-compute-emulator/">Remotely accessing the Windows Azure Compute Emulator</a></p>
+
+<h3>
+<a name="how-to-use-it" class="anchor" href="#how-to-use-it"><span class="octicon octicon-link"></span></a>How to use it</h3>
+
+<p>Using the Badge service to geneate badges on the fly is pretty easy. Just add a reference to this two projects to your .NET, Windows Phone 8 or WindowsRT app:</p>
+
+<ul>
+<li>Model (Contains all the base classes to handle the badge data)</li>
+<li>BadgeServicePCLClient (send requests against the badge service)</li>
+</ul><p>Here is a short sample (taken from the Windows Phone sample):</p>
+
+<pre><code>BadgeServiceClient cl = new BadgeServiceClient("http://[YOURSERVICEHOST]:800/badges");
+
+        BadgeGenData data = new BadgeGenData();
+
+        data.BadgeName = "test";
+
+        data.BadgeData.Add(new BadgeTextContent(){ElementName = "text3003", Value=this.txtBadgeparam.Text});
+
+        var imageData = await cl.CreateBadgeImage(data);
+
+        if(imageData != null)
+        {
+            if(imageData.Length &gt; 0)
+            {
+                BitmapImage bitmapImage = new BitmapImage();
+
+                try
+                {
+
+                    using (MemoryStream ms = new MemoryStream(imageData))
+                    {
+
+                        bitmapImage.SetSource(ms);
+
+                        this.imgBadge.Source = bitmapImage;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                }
+            }
+        }
+</code></pre>
+
+<p>First you create the BadgeServiceClient and add a valid url. In this case you can see the local service URL, when testing the service locally, after applying the netsh settings. Next thing that needs to be done is to create a new instance of the BadgeGenData class. This class is responsible to replace text in a specific SVG saved in the badges table. You set the BadgeName and create a bunch of properties key/value pairs to replace SVG text-properties with your custom text. Then you call the CreateBadgeImage method, that will return the bytes of the generated PNG file. You can convert these bytes to an imageSource and assign it to an image control or save it for later use.</p>
+
+<p>You can contact me on Twitter: <a href="https://twitter.com/AWSOMEDEVSIGNER">@awsomedevsigner</a></p>
+
+<p>Read more on my <a href="http://awsomedevsiger.cloudapp.net/2013/10/30/automate-svg-templating-on-windows-azure-the-azure-badge-generator/">blog</a></p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Injac/AzureBadgeGenerator-/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Injac/AzureBadgeGenerator-/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Injac/AzureBadgeGenerator-"></a> is maintained by <a href="https://github.com/Injac">Injac</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
